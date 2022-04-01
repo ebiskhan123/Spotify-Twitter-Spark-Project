@@ -11,3 +11,6 @@ twitter:
   api:
     token: ${TWITTER_TOKEN}
 
+musixmatch:
+  api:
+    token: ${MUSIXMATCH_TOKEN}
