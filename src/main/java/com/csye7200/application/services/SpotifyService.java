@@ -1,11 +1,19 @@
 package com.csye7200.application.services;
 
+import com.csye7200.application.objects.Song;
+import com.csye7200.application.objects.TwitterData;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import org.apache.sling.commons.json.JSONArray;
+import org.apache.sling.commons.json.JSONException;
+import org.apache.sling.commons.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class SpotifyService implements ServiceInterface {
@@ -15,7 +23,6 @@ public class SpotifyService implements ServiceInterface {
 
     @Value("${spotify.api.token}")
     String spotifyToken;
-    // ;SPOTIFY_TOKEN=BQC6FeM2cCjveg72oJ-IKKIRHLFPsraVRnAr4sIl_Zhvcg-DP3RElaVlkyzeTq-n1QgLOgYNXQtQ4HI2Hl9TaAKe7h6hWIO45VejeHRcpGD3dvLTX73_yIowwKTjBJeBq1iEG6x3GvmgIq_koM8x8zPm-13B-18UdRjEVkSquCKRA789lR79j3sjvA-jwQraO5rUVZqRHoNlzLvKQ0F-kAjEKdLN4orZlEWAfPkYmGL0TdSq
     @Override
     public void getData() {
         OkHttpClient client = new OkHttpClient().newBuilder()
@@ -23,10 +30,13 @@ public class SpotifyService implements ServiceInterface {
         Request request = new Request.Builder()
                 .url("https://api.spotify.com/v1/playlists/37i9dQZEVXbMDoHDwVN2tF/tracks")
                 .method("GET", null)
-                .addHeader("Authorization", "Bearer BQC6FeM2cCjveg72oJ-IKKIRHLFPsraVRnAr4sIl_Zhvcg-DP3RElaVlkyzeTq-n1QgLOgYNXQtQ4HI2Hl9TaAKe7h6hWIO45VejeHRcpGD3dvLTX73_yIowwKTjBJeBq1iEG6x3GvmgIq_koM8x8zPm-13B-18UdRjEVkSquCKRA789lR79j3sjvA-jwQraO5rUVZqRHoNlzLvKQ0F-kAjEKdLN4orZlEWAfPkYmGL0TdSq" + spotifyToken)
+                .addHeader("Authorization", "Bearer " + spotifyToken)
                 .build();
         try {
             Response response = client.newCall(request).execute();
+            String body = response.body().string();
+            List<Song> songList = extractData(body);
+            queryForLyrics(songList);
         }
         catch (Exception e) {
             e.printStackTrace();
@@ -34,16 +44,46 @@ public class SpotifyService implements ServiceInterface {
 
     }
 
-    private void queryData(){
-
+    private List<Song> extractData(String body) throws JSONException {
+        List<Song> songDataList = new ArrayList<>();
+        JSONObject jsonObject = new JSONObject(body);
+        String dataObject =  jsonObject.getString("items");
+        JSONArray jsonArray = new JSONArray(dataObject);
+        for( int i =0 ; i< jsonArray.length();i++){
+            String trackName = getTrackName(jsonArray.getJSONObject(i));
+            String artistName = getArtistName(jsonArray.getJSONObject(i));
+            Song song = new Song(trackName,artistName);
+            songDataList.add(song);
+        }
+        return songDataList;
     }
+
+
+
+    private String getTrackName(JSONObject item) throws JSONException {
+
+        JSONObject track = item.getJSONObject("track");
+        String name = track.getString("name");
+        return name;
+    }
+
+    private String getArtistName(JSONObject item) throws JSONException {
+
+        JSONObject track = item.getJSONObject("track");
+        JSONObject album = track.getJSONObject("album");
+        JSONArray artists = album.getJSONArray("artists");
+//        JSONArray jsonArray = new JSONArray(artists);
+        String name = artists.getJSONObject(0).getString("name");
+        return name;
+    }
+
 
     private void checkForAnyUpdate(){
 
     }
 
-    private void queryForLyrics(){
-
+    private void queryForLyrics(List<Song> songList){
+        musixMatchService.getData(songList);
     }
 
 
