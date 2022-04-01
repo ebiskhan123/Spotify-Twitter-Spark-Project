@@ -14,3 +14,7 @@ twitter:
 musixmatch:
   api:
     token: ${MUSIXMATCH_TOKEN}
+
+spotify:
+  api:
+    token: ${SPOTIFY_TOKEN}
