@@ -1,0 +1,13 @@
+spring:
+  application:
+    name: MusicTweetAnalyzer
+server:
+  port: 8080
+
+logging.config:
+  classpath: log4j2.xml
+
+twitter:
+  api:
+    token: ${TWITTER_TOKEN}
+

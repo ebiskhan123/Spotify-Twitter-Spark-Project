@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration>
+
+    <Properties>
+
+        <Property name="filename">musictweetanalyzer_application.log</Property>
+        <Property name="filepattern">musictweetanalyzer_application-%d{MM-dd-yyyy}-%i.log</Property>
+
+    </Properties>
+
+    <Appenders>
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout pattern="%-5level [%t] - %msg%n"/>
+        </Console>
+
+        <RollingFile name ="MainLoggingFile" fileName="${filename}"
+                     filePattern = "../logs/${filepattern}">
+
+            <PatternLayout>
+                <Pattern>%d [%X{requestIdentifier}] [%t] %-5p -%m\n</Pattern>
+            </PatternLayout>
+
+            <Policies>
+                <onStartupTriggeringPolicy />
+                <TimeBasedTriggeringPolicy />
+                <SizeBasedTriggeringPolicy size = "25 MB"/>
+            </Policies>
+
+            <DefaultRolloverStrategy fileIndex="nomax">
+                <Delete basePath="../logs/rolledup">
+                    <IfFileName glob="musictweetanalyzer_application-*-*.log">
+                        <IfLastModified age="40d" />
+                    </IfFileName>
+                </Delete>
+            </DefaultRolloverStrategy>
+        </RollingFile>
+    </Appenders>
+
+    <Loggers>
+        <Logger name="org.springramework.web" level="INFO" additivity="false">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="MainLoggingFile"/>
+        </Logger>
+
+        <Logger name="com.csye7200.application.console" level="ERROR">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="MainLoggingFile"/>
+        </Logger>
+
+        <Logger name="com.csye7200.application" level="INFO" additivity="false">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="MainLoggingFile"/>
+        </Logger>
+    </Loggers>
+
+</Configuration>
