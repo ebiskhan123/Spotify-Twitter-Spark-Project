@@ -8,6 +8,6 @@ import lombok.*;
 @Builder
 @Getter
 public class Message {
-    private String content;
+    private String songDetails;
     private String senderId;
 }

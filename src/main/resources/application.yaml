@@ -21,7 +21,7 @@ spotify:
 
 kafka:
   server_endpoint: 127.0.0.1:9092
-  topic_name: my-topic
+  topic_name: songs-topic
 
 #    kafka.server_endpoint = 127.0.0.1:9092
 #    kafka.topic_name = my-topic

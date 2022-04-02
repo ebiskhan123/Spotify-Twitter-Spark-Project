@@ -2,12 +2,18 @@ package com.csye7200.application.objects;
 
 import lombok.*;
 
-@AllArgsConstructor
 @NoArgsConstructor
 @ToString
 @Builder
 @Getter
+@AllArgsConstructor
+@Setter
 public class Song {
+    public Song(String trackName,String artistName){
+        this.trackName = trackName;
+        this.artistName = artistName;
+    }
     String trackName;
     String artistName;
+    String lyrics;
 }

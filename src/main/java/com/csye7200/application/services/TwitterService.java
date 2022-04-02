@@ -1,5 +1,6 @@
 package com.csye7200.application.services;
 
+import com.csye7200.application.objects.Message;
 import com.csye7200.application.objects.TwitterData;
 import com.fasterxml.jackson.databind.util.JSONPObject;
 import org.apache.sling.commons.json.JSONArray;
@@ -9,6 +10,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +23,8 @@ public class TwitterService implements ServiceInterface {
     @Value("${twitter.api.token}")
     String twitterToken;
 
+    @Autowired
+    KafkaService kafkaService;
 
     @Override
     public void getData() {
@@ -35,7 +39,10 @@ public class TwitterService implements ServiceInterface {
         try {
             Response response = client.newCall(request).execute();
 //            System.out.println(response.body().string());
-            getListOfTwitterData(response.body().string());
+            List<TwitterData> list = getListOfTwitterData(response.body().string());
+
+            kafkaService.publishMessage(new Message(list.toString(),"DataCollectorService"),"tweets-topic");
+
         }
         catch (Exception e) {
             e.printStackTrace();
