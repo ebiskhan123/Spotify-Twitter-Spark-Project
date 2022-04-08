@@ -18,5 +18,15 @@ object SparkStreamingTweets {
       .option("subscribe", "tweets-topic")
       .option("startingOffsets", "earliest")
       .load()
+
+//    val query = df.writeStream
+//      .outputMode("append")
+//      .format("console")
+//      .start().awaitTermination();
+
+    val wordCounts = df.groupBy("value").count()
+
+    print(wordCounts)
+    df.printSchema()
   }
 }
