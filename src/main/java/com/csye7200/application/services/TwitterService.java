@@ -1,6 +1,7 @@
 package com.csye7200.application.services;
 
 import com.csye7200.application.objects.Message;
+import com.csye7200.application.objects.TweetMessage;
 import com.csye7200.application.objects.TwitterData;
 import com.fasterxml.jackson.databind.util.JSONPObject;
 import org.apache.sling.commons.json.JSONArray;
@@ -41,7 +42,7 @@ public class TwitterService implements ServiceInterface {
 //            System.out.println(response.body().string());
             List<TwitterData> list = getListOfTwitterData(response.body().string());
 
-            kafkaService.publishMessage(new Message(list.toString(),"DataCollectorService"),"tweets-topic");
+            kafkaService.publishTweetMessage(new TweetMessage(list,"DataCollectorService"),"tweets-topic");
 
         }
         catch (Exception e) {
