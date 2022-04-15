@@ -45,7 +45,7 @@ public class MusixMatchService  {
                 song.setLyrics(lyrics);
                 System.out.println(lyrics);
             }
-           kafkaService.publishMessage(new Message(songList,"DataCollectorService"),"songs-topic");
+           kafkaService.publishMessage(new Message(songList,"DataCollectorService",null),"songs-topic");
         }
         catch (Exception e) {
             e.printStackTrace();

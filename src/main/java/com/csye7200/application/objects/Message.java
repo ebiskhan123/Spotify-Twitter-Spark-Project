@@ -13,4 +13,5 @@ import java.util.List;
 public class Message {
     private List<Song> songDetails;
     private String senderId;
+    private List<TwitterData> tweets;
 }

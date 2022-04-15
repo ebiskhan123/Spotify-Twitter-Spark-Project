@@ -42,7 +42,7 @@ public class TwitterService implements ServiceInterface {
 //            System.out.println(response.body().string());
             List<TwitterData> list = getListOfTwitterData(response.body().string());
 
-            kafkaService.publishTweetMessage(new TweetMessage(list,"DataCollectorService"),"tweets-topic");
+            kafkaService.publishMessage(new Message(null,"DataCollectorService",list),"tweets-topic");
 
         }
         catch (Exception e) {

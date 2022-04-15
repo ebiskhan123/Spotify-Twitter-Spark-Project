@@ -14,8 +14,9 @@ import org.springframework.util.concurrent.ListenableFutureCallback;
 public class KafkaService {
     @Autowired
     private KafkaTemplate<String, Message> kafkaTemplate;
-    @Autowired
-    private KafkaTemplate<String, TweetMessage> kafkatweetTemplate;
+
+//    @Autowired
+//    private KafkaTemplate<String, TweetMessage> kafkatweetTemplate;
 
 //    @Value(value = "${kafka.topic_name}")
 //    private String kafkaTopicName;
@@ -38,21 +39,21 @@ public class KafkaService {
     }
 
 
-    public void publishTweetMessage(TweetMessage message, String kafkaTopicName){
-        ListenableFuture<SendResult<String, TweetMessage>> future = this.kafkatweetTemplate.send(kafkaTopicName, message);
-
-        future.addCallback(new ListenableFutureCallback<SendResult<String, TweetMessage>>() {
-
-            @Override
-            public void onSuccess(SendResult<String, TweetMessage> result) {
-                System.out.println("success");
-            }
-
-            @Override
-            public void onFailure(Throwable ex) {
-                System.out.println("failure");
-            }
-        });
-    }
+//    public void publishTweetMessage(TweetMessage message, String kafkaTopicName){
+//        ListenableFuture<SendResult<String, TweetMessage>> future = this.kafkatweetTemplate.send(kafkaTopicName, message);
+//
+//        future.addCallback(new ListenableFutureCallback<SendResult<String, TweetMessage>>() {
+//
+//            @Override
+//            public void onSuccess(SendResult<String, TweetMessage> result) {
+//                System.out.println("success");
+//            }
+//
+//            @Override
+//            public void onFailure(Throwable ex) {
+//                System.out.println("failure");
+//            }
+//        });
+//    }
 
 }
