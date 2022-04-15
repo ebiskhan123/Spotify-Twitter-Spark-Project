@@ -1,6 +1,11 @@
 package com.csye7200.application.streaming
 
-import org.apache.spark.sql.SparkSession
+import org.apache.spark.sql.catalyst.dsl.expressions.StringToAttributeConversionHelper
+import org.apache.spark.sql.{Column, SparkSession, functions, types}
+import org.apache.spark.sql.functions._
+import org.apache.spark.sql.functions.struct
+import org.apache.spark.sql.types.{ArrayType, StringType, StructField, StructType}
+import org.apache.spark.sql.functions.get_json_object
 
 object SparkStreamingTweets {
   def main(args: Array[String]): Unit = {
@@ -19,14 +24,19 @@ object SparkStreamingTweets {
       .option("startingOffsets", "earliest")
       .load()
 
-//    val query = df.writeStream
-//      .outputMode("append")
-//      .format("console")
-//      .start().awaitTermination();
 
-    val wordCounts = df.groupBy("value").count()
+    val schema = new StructType()
+      .add("songDetails",
+        ArrayType(new StructType()
+          .add("trackName",StringType)
+          .add("lyrics",StringType)))
+      .add("senderId",StringType)
+      .add("tweets",StringType)
 
-    print(wordCounts)
-    df.printSchema()
+    val songs = df.select(from_json(col("value"),schema))
+    val songexpanded = songs.withColumn("songExpanded",explode_outer(col("songDetails")))
+    songexpanded.withColumn("songSentiment",udf(twitterAnalysis.mainSentiment()))
+
+
   }
 }
