@@ -35,7 +35,8 @@ object SparkStreamingTweets {
 
     val songs = df.select(from_json(col("value"),schema))
     val songexpanded = songs.withColumn("songExpanded",explode_outer(col("songDetails")))
-    songexpanded.withColumn("songSentiment",udf(twitterAnalysis.mainSentiment()))
+    val sentiment = udf(twitterAnalysis.intSentiment _)
+    val r = songexpanded.withColumn("songSentiment",sentiment(col("songExpanded.lyrics")))
 
 
   }

@@ -19,6 +19,15 @@ object twitterAnalysis {
     props.setProperty("annotators", "tokenize, ssplit, parse, sentiment")
     val pipeline: StanfordCoreNLP = new StanfordCoreNLP(props)
 
+    def intSentiment(input: String): Integer = Option(input) match {
+        case Some(text) if !text.isEmpty => extractSentiment(text) match {
+            case(Sentiment.NEUTRAL) => 0
+            case(Sentiment.POSITIVE) => 1
+            case(Sentiment.NEGATIVE) => -1
+        }
+        case _ => throw new IllegalArgumentException("input can't be null or empty")
+    }
+
     def mainSentiment(input: String): Sentiment = Option(input) match {
         case Some(text) if !text.isEmpty => extractSentiment(text)
         case _ => throw new IllegalArgumentException("input can't be null or empty")
