@@ -2,6 +2,8 @@ package com.csye7200.application.objects;
 
 import lombok.*;
 
+import java.util.List;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
@@ -9,6 +11,6 @@ import lombok.*;
 @Getter
 @Setter
 public class Message {
-    private String songDetails;
+    private List<Song> songDetails;
     private String senderId;
 }
