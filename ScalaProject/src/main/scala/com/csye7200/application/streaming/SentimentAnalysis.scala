@@ -8,7 +8,7 @@ import edu.stanford.nlp.sentiment.SentimentCoreAnnotations
 import Sentiment.Sentiment
 import scala.collection.convert.wrapAll._
 
-object twitterAnalysis {
+object SentimentAnalysis {
     def main(args: Array[String]): Unit = {
         val input = "Wow u have them trained well "
         val sentiment = mainSentiment(input)

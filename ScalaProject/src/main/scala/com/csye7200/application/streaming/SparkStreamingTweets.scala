@@ -5,7 +5,6 @@ import org.apache.spark.sql.{Column, Dataset, ForeachWriter, Row, SparkSession, 
 import org.apache.spark.sql.functions._
 import org.apache.spark.sql.functions.struct
 import org.apache.spark.sql.types.{ArrayType, StringType, StructField, StructType}
-import org.apache.spark.sql.functions.get_json_object
 
 object SparkStreamingTweets {
   def main(args: Array[String]): Unit = {
@@ -41,7 +40,7 @@ object SparkStreamingTweets {
 
     def saveToFile() = (df : Dataset[Row], batchId: Long) => {
       df.persist()
-      df.foreach((row: Row) => {println(twitterAnalysis.intSentiment(row.toString()))})
+      df.foreach((row: Row) => {println(SentimentAnalysis.intSentiment(row.toString()))})
     }
 
     r.writeStream
@@ -49,6 +48,5 @@ object SparkStreamingTweets {
       .foreachBatch(saveToFile())
       .start()
       .awaitTermination()
-
   }
 }

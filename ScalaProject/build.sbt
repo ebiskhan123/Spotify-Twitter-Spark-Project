@@ -17,7 +17,8 @@ libraryDependencies ++= Seq(
   "org.scalatest" %% "scalatest" % "3.0.1" % "test",
   "org.apache.spark" %% "spark-sql-kafka-0-10" % sparkVersion,
   "edu.stanford.nlp" % "stanford-corenlp" % "3.6.0",
-  "edu.stanford.nlp" % "stanford-corenlp" % "3.6.0" classifier "models"
+  "edu.stanford.nlp" % "stanford-corenlp" % "3.6.0" classifier "models",
+  "mysql" % "mysql-connector-java" % "5.1.44"
 )
 //libraryDependencies += "org.apache.spark" %% "spark-sql-kafka-0-10" % "2.4.0" % Test
 //lazy val root = (project in file("."))
