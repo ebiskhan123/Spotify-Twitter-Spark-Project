@@ -19,7 +19,7 @@ object SparkStreamingTweets {
     val df = spark.readStream
       .format("kafka")
       .option("kafka.bootstrap.servers", "127.0.0.1:9092")
-      .option("subscribe", "songs-topic")
+      .option("subscribe", "tweets-topic")
       .option("startingOffsets", "earliest")
       .load()
 
@@ -34,16 +34,28 @@ object SparkStreamingTweets {
         .add("id", StringType)
         .add("text", StringType)))
 
-    val songs = df.selectExpr("cast (value as string)").select(from_json(col("value"),schema).as("data")).select("data.*")
-    val songexpanded = songs.select(explode(col("songDetails") as "songDetails"))
-    val r = songs.select(explode(col("songDetails.lyrics") ))
+    val tweets = df.selectExpr("cast (value as string)").select(from_json(col("value"),schema).as("data")).select("data.*")
+    //val tweetExpanded = tweets.select(explode(col("tweets") as "tweets"))
 
-    def saveToFile() = (df : Dataset[Row], batchId: Long) => {
+    val tweetExpanded = tweets.select(explode(col("tweets").as(Seq("id", "txt"))))
+    val r = tweets.select(explode(col("tweets.text") ))
+
+  def saveToFile(): (Dataset[Row], Long) => Unit = (df : Dataset[Row], batchId: Long) => {
       df.persist()
-      df.foreach((row: Row) => {println(SentimentAnalysis.intSentiment(row.toString()))})
+      df.foreach((row: Row) => {
+        //println(SentimentAnalysis.intSentiment(row.toString()))
+        //println("--------------------------------" + row.toString())
+        val tweetId = row.getStruct(0).get(0).toString
+        val tweetText = row.getStruct(0).get(1).toString
+        val sentiment = SentimentAnalysis.intSentiment(tweetText)
+        //println("--------------------------------ID: " + tweetId)
+        val query = s"INSERT INTO tweet values('$tweetId', '$tweetText', '$sentiment')"
+        //println("text: " + tweetText)
+        DbWriter.execute(query)
+        println(query)
+      })
     }
-
-    r.writeStream
+    tweetExpanded.writeStream
       .outputMode("append")
       .foreachBatch(saveToFile())
       .start()

@@ -58,8 +58,6 @@ public class SpotifyService implements ServiceInterface {
         return songDataList;
     }
 
-
-
     private String getTrackName(JSONObject item) throws JSONException {
 
         JSONObject track = item.getJSONObject("track");
