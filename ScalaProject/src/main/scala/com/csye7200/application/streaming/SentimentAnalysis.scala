@@ -9,6 +9,11 @@ import Sentiment.Sentiment
 import scala.collection.convert.wrapAll._
 
 object SentimentAnalysis {
+    def cleanString(s: String): String = {
+        // not including ' and " symbols as they cause issues with DB queries
+        s.filter(x => x.toString.matches("[a-z]|[A-Z]|[0-9]|\\ |\\.|\\?|\\!"))
+    }
+
     def main(args: Array[String]): Unit = {
         val input = "Wow u have them trained well "
         val sentiment = mainSentiment(input)

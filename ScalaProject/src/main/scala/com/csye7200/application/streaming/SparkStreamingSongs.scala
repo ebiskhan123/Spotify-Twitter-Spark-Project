@@ -33,15 +33,22 @@ object SparkStreamingSongs {
           .add("text", StringType)))
 
     val songs = df.selectExpr("cast (value as string)").select(from_json(col("value"),schema).as("data")).select("data.*")
-    val songexpanded = songs.select(explode(col("songDetails") as "songDetails"))
-    val r = songs.select(explode(col("songDetails.lyrics") ))
+    val songExpanded = songs.select(explode(col("songDetails").as(Seq("trackName", "lyrics"))))
 
     def saveToFile() = (df : Dataset[Row], batchId: Long) => {
       df.persist()
-      df.foreach((row: Row) => {println(SentimentAnalysis.intSentiment(row.toString()))})
+      df.foreach((row: Row) => {
+        // println(SentimentAnalysis.intSentiment(row.toString()))
+        val trackName = row.getStruct(0).get(0).toString
+        val trackLyrics = SentimentAnalysis.cleanString(row.getStruct(0).get(1).toString)
+        val sentiment = SentimentAnalysis.intSentiment(trackLyrics)
+        val query = s"INSERT INTO song values('$trackName', '$trackLyrics', '$sentiment')"
+        DbWriter.execute(query)
+        println(query)
+      })
     }
 
-    r.writeStream
+    songExpanded.writeStream
       .outputMode("append")
       .foreachBatch(saveToFile())
       .start()

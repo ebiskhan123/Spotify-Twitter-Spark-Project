@@ -38,19 +38,14 @@ object SparkStreamingTweets {
     //val tweetExpanded = tweets.select(explode(col("tweets") as "tweets"))
 
     val tweetExpanded = tweets.select(explode(col("tweets").as(Seq("id", "txt"))))
-    val r = tweets.select(explode(col("tweets.text") ))
 
   def saveToFile(): (Dataset[Row], Long) => Unit = (df : Dataset[Row], batchId: Long) => {
       df.persist()
       df.foreach((row: Row) => {
-        //println(SentimentAnalysis.intSentiment(row.toString()))
-        //println("--------------------------------" + row.toString())
         val tweetId = row.getStruct(0).get(0).toString
-        val tweetText = row.getStruct(0).get(1).toString
+        val tweetText = SentimentAnalysis.cleanString(row.getStruct(0).get(1).toString)
         val sentiment = SentimentAnalysis.intSentiment(tweetText)
-        //println("--------------------------------ID: " + tweetId)
         val query = s"INSERT INTO tweet values('$tweetId', '$tweetText', '$sentiment')"
-        //println("text: " + tweetText)
         DbWriter.execute(query)
         println(query)
       })
