@@ -1,7 +1,5 @@
 package com.csye7200.application.streaming
 
-import org.apache.spark.sql.{DataFrame, DataFrameReader}
-
 import java.sql.{Connection, DriverManager, ResultSet}
 
 object DbOps {
@@ -15,13 +13,6 @@ object DbOps {
   def execute(query: String): Unit = {
     try {
       statement.execute(query)
-      //val rs = statement.executeQuery(query)
-      //val rs = statement.executeQuery("SELECT * from song")
-      //while (rs.next) {
-      //  val title = rs.getString("title")
-      //  val lyrics = rs.getString("lyrics")
-      //  println("title = %s, lyrics = %s".format(title, lyrics))
-      //}
     } catch {
       case e: Exception => e.printStackTrace
     }

@@ -1,11 +1,9 @@
 package com.csye7200.application.streaming
 
-import org.apache.spark.rdd.RDD
-import org.apache.spark.sql.catalyst.dsl.expressions.StringToAttributeConversionHelper
-import org.apache.spark.sql.{Column, DataFrame, Dataset, ForeachWriter, Row, SparkSession, functions, types}
 import org.apache.spark.sql.functions._
-import org.apache.spark.sql.functions.struct
-import org.apache.spark.sql.types.{ArrayType, StringType, StructField, StructType}
+import org.apache.spark.sql.types.{ArrayType, StringType, StructType}
+import org.apache.spark.sql.{DataFrame, Dataset, Row, SparkSession}
+
 
 object SparkStreamingTweets {
   def main(args: Array[String]): Unit = {
@@ -36,23 +34,23 @@ object SparkStreamingTweets {
         .add("text", StringType)))
 
     val tweets = df.selectExpr("cast (value as string)").select(from_json(col("value"),schema).as("data")).select("data.*")
-    //val tweetExpanded = tweets.select(explode(col("tweets") as "tweets"))
 
     val tweetExpanded = tweets.select(explode(col("tweets").as(Seq("id", "txt"))))
 
     def saveToFile(): (Dataset[Row], Long) => Unit = (batchDf : Dataset[Row], batchId: Long) => {
       batchDf.persist()
       //batchDf.printSchema()
-      val df = SparkTextCosine.buildFeatureVectorDF(batchDf, List("col.text"))
+      val df = SparkTextFeatureVector.buildFeatureVectorDF(batchDf, List("col.text"))
+
       df.foreach((row: Row) => {
-        /*val tweetId = row.getStruct(0).get(0).toString
+        val tweetId = row.getStruct(0).get(0).toString
         val tweetText = SentimentAnalysis.cleanString(row.getStruct(0).get(1).toString)
         val sentiment = SentimentAnalysis.intSentiment(tweetText)
-        val query = s"INSERT INTO tweet values('$tweetId', '$tweetText', '$sentiment')"
-        DbWriter.execute(query)
-        println(query)*/
-        val songDf: DataFrame = getAllSongDf(batchDf.sparkSession)
-        df.printSchema()
+        val TFVector = row.get(4) match {case vec: org.apache.spark.ml.linalg.SparseVector => vec.toString()}
+        val IDFVector = row.get(5) match {case vec: org.apache.spark.ml.linalg.SparseVector => vec.toString()}
+        val query = s"INSERT INTO tweet(tweet_id, tweet_text, sentiment, tf_vector, idf_vector) values('$tweetId', '$tweetText', '$sentiment', '$TFVector', '$IDFVector')"
+        DbOps.execute(query)
+        println(query)
       })
       df.printSchema()
     }

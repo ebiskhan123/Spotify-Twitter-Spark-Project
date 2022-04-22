@@ -2,16 +2,16 @@ package com.csye7200.application.streaming
 
 import org.apache.spark.ml.Pipeline
 import org.apache.spark.ml.feature.{HashingTF, IDF, RegexTokenizer, StopWordsRemover}
+import org.apache.spark.mllib.linalg.Vector
 import org.apache.spark.sql.DataFrame
-import org.apache.spark.sql.functions.{col, udf}
-import org.apache.spark.ml.linalg.Vector
+import org.apache.spark.sql.functions.{col, monotonically_increasing_id, udf}
 /*
 * https://medium.com/expedia-group-tech/building-large-scale-text-similarity-algorithms-with-spark-ml-pipelines-3dca28828e47
 * https://spark.apache.org/docs/latest/ml-pipeline.html
 *
 * */
 
-object SparkTextCosine {
+object SparkTextFeatureVector {
 
     def cosineSimilarity = udf((a: Vector, b: Vector) => {
         val l1 = scala.math.sqrt(a.toArray.map(x => x*x).sum)
@@ -53,7 +53,8 @@ object SparkTextCosine {
             Array(tokenizer, stopWordsRemover, hashTF, idf)
         })
         val pipeline = new Pipeline().setStages(processingSteps)
-        pipeline.fit(df).transform(df)
+        val dfout = pipeline.fit(df).transform(df).withColumn("index", monotonically_increasing_id())
+        val dfin = input_df.withColumn("index", monotonically_increasing_id())
+        dfin.join(dfout, List("index")).drop(col("index"))
     }
-
 }
