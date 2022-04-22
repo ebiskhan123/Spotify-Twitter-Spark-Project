@@ -28,27 +28,28 @@ object SparkTextCosine {
             .replaceAll("  "," ")
     }
 
-    def buildPipeline(input_df: DataFrame, colNameList: List[String]) = {
+    def buildFeatureVectorDF(input_df: DataFrame, colNameList: List[String]) = {
+        val newColName = "newText"
         val stringCleaner = udf((s: String) => cleanString(s))
-        val columnCleaner = colNameList.map(fld => stringCleaner(col(fld)).as(fld + "_clean"))
+        val columnCleaner = colNameList.map(fld => stringCleaner(col(fld)).as(newColName + "_clean"))
         val df = input_df.select(columnCleaner: _*)
         val processingSteps = df.columns.flatMap(colName => {
             val tokenizer = new RegexTokenizer()
                 .setInputCol(colName/* + "_clean"*/)
-                .setOutputCol(colName + "_tok")
+                .setOutputCol(newColName + "_tok")
                 .setGaps(false)
                 .setPattern("\\p{L}+")
             val stopWordsRemover = new StopWordsRemover()
-                .setInputCol(colName + "_tok")
-                .setOutputCol(colName + "_nostop")
+                .setInputCol(newColName + "_tok")
+                .setOutputCol(newColName + "_nostop")
                 .setCaseSensitive(false)
             val hashTF = new HashingTF()
-                .setInputCol(colName + "_nostop")
-                .setOutputCol(colName + "_tf")
+                .setInputCol(newColName + "_nostop")
+                .setOutputCol(newColName + "_tf")
                 .setNumFeatures(10000)
             val idf = new IDF()
-                .setInputCol(colName + "_tf")
-                .setOutputCol(colName + "_idf")
+                .setInputCol(newColName + "_tf")
+                .setOutputCol(newColName + "_idf")
             Array(tokenizer, stopWordsRemover, hashTF, idf)
         })
         val pipeline = new Pipeline().setStages(processingSteps)

@@ -1,7 +1,8 @@
 package com.csye7200.application.streaming
 
+import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.catalyst.dsl.expressions.StringToAttributeConversionHelper
-import org.apache.spark.sql.{Column, Dataset, ForeachWriter, Row, SparkSession, functions, types}
+import org.apache.spark.sql.{Column, DataFrame, Dataset, ForeachWriter, Row, SparkSession, functions, types}
 import org.apache.spark.sql.functions._
 import org.apache.spark.sql.functions.struct
 import org.apache.spark.sql.types.{ArrayType, StringType, StructField, StructType}
@@ -39,21 +40,36 @@ object SparkStreamingTweets {
 
     val tweetExpanded = tweets.select(explode(col("tweets").as(Seq("id", "txt"))))
 
-  def saveToFile(): (Dataset[Row], Long) => Unit = (df : Dataset[Row], batchId: Long) => {
-      df.persist()
+    def saveToFile(): (Dataset[Row], Long) => Unit = (batchDf : Dataset[Row], batchId: Long) => {
+      batchDf.persist()
+      //batchDf.printSchema()
+      val df = SparkTextCosine.buildFeatureVectorDF(batchDf, List("col.text"))
       df.foreach((row: Row) => {
-        val tweetId = row.getStruct(0).get(0).toString
+        /*val tweetId = row.getStruct(0).get(0).toString
         val tweetText = SentimentAnalysis.cleanString(row.getStruct(0).get(1).toString)
         val sentiment = SentimentAnalysis.intSentiment(tweetText)
         val query = s"INSERT INTO tweet values('$tweetId', '$tweetText', '$sentiment')"
         DbWriter.execute(query)
-        println(query)
+        println(query)*/
+        val songDf: DataFrame = getAllSongDf(batchDf.sparkSession)
+        df.printSchema()
       })
+      df.printSchema()
     }
     tweetExpanded.writeStream
       .outputMode("append")
       .foreachBatch(saveToFile())
       .start()
       .awaitTermination()
+  }
+
+  def getAllSongDf(spark: SparkSession): DataFrame = {
+    val songList: List[List[String]] = DbOps.getAllSongs()
+    val rows = songList.map(x => Row(x: _*))
+    val rdd = spark.sparkContext.makeRDD(rows)
+    val schema = new StructType()
+      .add("trackName",StringType)
+      .add("lyrics",StringType)
+    spark.sqlContext.createDataFrame(rdd, schema)
   }
 }

@@ -43,7 +43,7 @@ object SparkStreamingSongs {
         val trackLyrics = SentimentAnalysis.cleanString(row.getStruct(0).get(1).toString)
         val sentiment = SentimentAnalysis.intSentiment(trackLyrics)
         val query = s"INSERT INTO song values('$trackName', '$trackLyrics', '$sentiment')"
-        DbWriter.execute(query)
+        DbOps.execute(query)
         println(query)
       })
     }
