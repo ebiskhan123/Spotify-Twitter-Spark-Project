@@ -1,6 +1,6 @@
 package com.csye7200.application.streaming
 
-import org.apache.spark.sql.{Dataset, Row, SparkSession}
+import org.apache.spark.sql.{DataFrame, Dataset, Row, SparkSession}
 import org.apache.spark.sql.functions.{col, explode, from_json}
 import org.apache.spark.sql.types.{ArrayType, StringType, StructType}
 
@@ -35,14 +35,18 @@ object SparkStreamingSongs {
     val songs = df.selectExpr("cast (value as string)").select(from_json(col("value"),schema).as("data")).select("data.*")
     val songExpanded = songs.select(explode(col("songDetails").as(Seq("trackName", "lyrics"))))
 
-    def saveToFile() = (df : Dataset[Row], batchId: Long) => {
-      df.persist()
+    def saveToFile() = (batchDf : Dataset[Row], batchId: Long) => {
+      batchDf.persist()
+      val df: DataFrame = SparkTextFeatureVector.buildFeatureVectorDF(batchDf, List("col.lyrics"))
+      df.show()
       df.foreach((row: Row) => {
         // println(SentimentAnalysis.intSentiment(row.toString()))
         val trackName = row.getStruct(0).get(0).toString
         val trackLyrics = SentimentAnalysis.cleanString(row.getStruct(0).get(1).toString)
         val sentiment = SentimentAnalysis.intSentiment(trackLyrics)
-        val query = s"INSERT INTO song values('$trackName', '$trackLyrics', '$sentiment')"
+        val TFVector = row.get(4) match {case vec: org.apache.spark.ml.linalg.SparseVector => vec.toString()}
+        val IDFVector = row.get(5) match {case vec: org.apache.spark.ml.linalg.SparseVector => vec.toString()}
+        val query = s"INSERT INTO song(title, lyrics, sentiment, tf_vector, idf_vector) values('$trackName', '$trackLyrics', '$sentiment', '$TFVector', '$IDFVector')"
         DbOps.execute(query)
         println(query)
       })
