@@ -17,7 +17,8 @@ musixmatch:
 
 spotify:
   api:
-    token: ${SPOTIFY_TOKEN}
+    client_id: ${SPOTIFY_CLIENT_ID}
+    client_secret: ${SPOTIFY_CLIENT_SECRET}
 
 kafka:
   server_endpoint: 127.0.0.1:9092

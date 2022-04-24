@@ -84,11 +84,15 @@ out/
 # JIRA plugin
 atlassian-ide-plugin.xml
 
+ScalaProject/.bsp
+
 # Cursive Clojure plugin
 .idea/replstate.xml
 
 # SonarLint plugin
 .idea/sonarlint/
+
+ScalaProject/.bsp/sbt.json
 
 # Crashlytics plugin (for Android Studio and IntelliJ)
 com_crashlytics_export_strings.xml

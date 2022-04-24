@@ -10,8 +10,7 @@ import java.util.List;
 @Builder
 @Getter
 @Setter
-public class Message {
-    private List<Song> songDetails;
-    private String senderId;
+public class TweetMessage {
     private List<TwitterData> tweets;
+    private String senderId;
 }
