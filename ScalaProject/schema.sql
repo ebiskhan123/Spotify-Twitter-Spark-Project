@@ -5,7 +5,8 @@ CREATE TABLE IF NOT EXISTS spark.song (
     lyrics varchar(5000),
     sentiment integer,
     tf_vector varchar(5000),
-    idf_vector varchar(5000)
+    idf_vector varchar(5000),
+    processed varchar(100) DEFAULT '0'
 );
 
 DROP TABLE IF EXISTS spark.tweet;
@@ -14,5 +15,6 @@ CREATE TABLE IF NOT EXISTS spark.tweet (
     tweet_text varchar(5000),
     sentiment integer,
     tf_vector varchar(5000),
-    idf_vector varchar(5000)
+    idf_vector varchar(5000),
+    processed varchar(100) DEFAULT '0'
 );
