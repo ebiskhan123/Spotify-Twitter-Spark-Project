@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -36,24 +37,31 @@ public class CosineSimilrityService {
     private void checkSimilarity(){
        Iterable<Song> songIter =  songRepository.findAll();
        List<Song> songList = new ArrayList<>();
-       while(songIter.iterator().hasNext()){
-           songList.add(songIter.iterator().next());
+        Iterator<Song> iterator = songIter.iterator();
+        songRepository.updateCount("Eminem sings");
+       while(iterator.hasNext()){
+           songList.add(iterator.next());
        }
        List<Tweet> tweetList = tweetRepository.findAllUncomputedTweets();
        CosineDistance dist = new CosineDistance();
-        double cosineDistance = Double.MIN_VALUE;
+        double cosineDistance ;
         String title = "";
-        double temp = 0d;
+        double temp = -1d;
        for( int i = 0 ; i< tweetList.size();i++){
            title = "";
+           cosineDistance = Double.MIN_VALUE;
+
            for( int j =0 ; j < songList.size();j++){
-               temp = dist.apply(songList.get(j).getLyrics(),tweetList.get(i).getTweets());
+               temp = 1- dist.apply(songList.get(j).getLyrics(),tweetList.get(i).getTweet_text());
                if(temp > cosineDistance){
                    title = songList.get(j).getTitle();
+                   cosineDistance = temp;
                }
            }
            Tweet tempTweet = tweetList.get(i);
            tempTweet.setProcessed(title);
+           tweetRepository.save(tempTweet);
+           songRepository.updateCount(title);
 
        }
 

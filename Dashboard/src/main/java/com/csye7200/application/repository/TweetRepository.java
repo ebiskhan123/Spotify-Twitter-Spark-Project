@@ -9,9 +9,9 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface TweetRepository extends CrudRepository<Song,Long> {
+public interface TweetRepository extends CrudRepository<Tweet,Long> {
 
-    @Query("SELECT t FROM Tweet t WHERE t.processed = 0")
+    @Query("SELECT t FROM Tweet t WHERE t.processed = '0'")
     List<Tweet> findAllUncomputedTweets();
 
 }

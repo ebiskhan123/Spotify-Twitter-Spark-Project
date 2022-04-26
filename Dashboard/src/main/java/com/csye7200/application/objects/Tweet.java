@@ -16,17 +16,17 @@ import javax.persistence.*;
         @NamedQuery(name = "Tweet.findAll", query = "select i from Tweet i")
 })
 public class Tweet {
-    @Id
-    @GeneratedValue(generator = "UUID")
-    @GenericGenerator(
-            name = "UUID",
-            strategy = "uuid"
-    )
-    private String id;
 
-    private String title;
-    private String tweets;
+    public Tweet(){
+
+    }
+    @Id
+    private String tweet_id;
+
+    private String tweet_text;
+
     private Integer sentiment;
+
     private String tf_vector;
     private String idf_vector;
     private String processed;

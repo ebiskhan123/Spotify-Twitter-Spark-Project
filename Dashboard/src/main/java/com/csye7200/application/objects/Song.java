@@ -17,19 +17,16 @@ import javax.persistence.*;
 })
 public class Song {
 
-    @Id
-    @GeneratedValue(generator = "UUID")
-    @GenericGenerator(
-            name = "UUID",
-            strategy = "uuid"
-    )
-    private String id;
+    public Song(){
 
+    }
+    @Id
     private String title;
+
     private String lyrics;
     private Integer sentiment;
     private String tf_vector;
     private String idf_vector;
-    private String processed;
+    private Integer processed;
 
 }
