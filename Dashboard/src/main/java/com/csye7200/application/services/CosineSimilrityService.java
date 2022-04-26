@@ -15,6 +15,7 @@ import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -38,7 +39,7 @@ public class CosineSimilrityService {
        Iterable<Song> songIter =  songRepository.findAll();
        List<Song> songList = new ArrayList<>();
         Iterator<Song> iterator = songIter.iterator();
-        songRepository.updateCount("Eminem sings");
+//        songRepository.updateCount();
        while(iterator.hasNext()){
            songList.add(iterator.next());
        }
@@ -61,8 +62,14 @@ public class CosineSimilrityService {
            Tweet tempTweet = tweetList.get(i);
            tempTweet.setProcessed(title);
            tweetRepository.save(tempTweet);
-           songRepository.updateCount(title);
-
+           Optional<Song> songoptional = songRepository.findById(title);
+           if (songoptional.isPresent()){
+              Song song =  songoptional.get();
+              song.setProcessed(song.getProcessed() +1);
+              songRepository.save(song);
+           }
+//           songRepository.updateCount(titletle);
+            System.out.print("");
        }
 
     }
