@@ -3,7 +3,7 @@ package com.csye7200.application.streaming
 import java.sql.{Connection, DriverManager, ResultSet}
 
 object DbOps {
-  val url = "jdbc:mysql://localhost:3306/spark?autoReconnect=true"
+  val url = "jdbc:mysql://localhost:3308/spark?autoReconnect=true"
   val driver = "com.mysql.jdbc.Driver"
   val username = "root"
   val password = ""

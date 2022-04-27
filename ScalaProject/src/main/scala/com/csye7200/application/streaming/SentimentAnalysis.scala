@@ -30,12 +30,12 @@ object SentimentAnalysis {
             case(Sentiment.POSITIVE) => 1
             case(Sentiment.NEGATIVE) => -1
         }
-        case _ => throw new IllegalArgumentException("input can't be null or empty")
+        case _ => 0  // throw new IllegalArgumentException("input can't be null or empty")
     }
 
     def mainSentiment(input: String): Sentiment = Option(input) match {
         case Some(text) if !text.isEmpty => extractSentiment(text)
-        case _ => throw new IllegalArgumentException("input can't be null or empty")
+        case _ =>  Sentiment.NEUTRAL //throw new IllegalArgumentException("input can't be null or empty")
     }
 
     private def extractSentiment(text: String): Sentiment = {
