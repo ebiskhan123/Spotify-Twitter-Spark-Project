@@ -6,19 +6,19 @@ import com.csye7200.application.objects.Tweet;
 import com.csye7200.application.repository.SongRepository;
 import com.csye7200.application.repository.TweetRepository;
 import org.apache.commons.text.similarity.CosineDistance;
-import org.apache.commons.text.similarity.CosineSimilarity;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
+import org.apache.spark.mllib.linalg.Vector;
+import org.apache.spark.mllib.linalg.Vectors;
 
 @Service
 public class CosineSimilrityService {
@@ -33,6 +33,17 @@ public class CosineSimilrityService {
     void init(){
         ScheduledExecutorService service = Executors.newScheduledThreadPool(2);
         service.scheduleAtFixedRate(() -> checkSimilarity(),0,1, TimeUnit.MINUTES);
+    }
+
+    public double cosine(Vector a, Vector b) {
+        double[] aArr = a.toArray();
+        double[] bArr = b.toArray();
+        Double l1 = Math.sqrt(Arrays.stream(aArr).map(x -> x*x).sum());
+        Double l2 = Math.sqrt(Arrays.stream(bArr).map(x -> x*x).sum());
+        List<Double> x = Arrays.stream(IntStream.range(0, aArr.length).mapToObj(i -> aArr[i] * bArr[i]).toArray())
+                .map(val -> (Double) val).collect(Collectors.toList());
+        Double scalar = x.stream().reduce(0.0, Double::sum);
+        return Double.valueOf(scalar/(l1*l2));
     }
 
     private void checkSimilarity(){
@@ -53,7 +64,9 @@ public class CosineSimilrityService {
            cosineDistance = Double.MIN_VALUE;
 
            for( int j =0 ; j < songList.size();j++){
-               temp = 1- dist.apply(songList.get(j).getLyrics(),tweetList.get(i).getTweet_text());
+               Vector songVector = Vectors.parse(songList.get(j).getTf_vector());
+               Vector tweetVector = Vectors.parse(tweetList.get(i).getTf_vector());
+               temp = cosine(songVector, tweetVector);
                if(temp > cosineDistance){
                    title = songList.get(j).getTitle();
                    cosineDistance = temp;
@@ -68,7 +81,6 @@ public class CosineSimilrityService {
               song.setProcessed(song.getProcessed() +1);
               songRepository.save(song);
            }
-//           songRepository.updateCount(titletle);
             System.out.print("");
        }
 
