@@ -2,6 +2,8 @@ package com.csye7200.application.controller;
 
 import com.csye7200.application.objects.Song;
 import com.csye7200.application.objects.SongSentiment;
+import com.csye7200.application.objects.Tweet;
+import com.csye7200.application.objects.TweetSentiment;
 import com.csye7200.application.repository.SongRepository;
 import com.csye7200.application.repository.TweetRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,6 +72,26 @@ public class DataController {
 
     }
 
+    @GetMapping(value = "/getTweetSentiment",
+            produces = {MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<?> getTweetSentiment( ){
+
+        try{
+            Iterable<Tweet> tweetIter =  tweetRepository.findAll();
+            List<Tweet> tweetList = new ArrayList<>();
+            Iterator<Tweet> iterator = tweetIter.iterator();
+            TweetSentiment tweetSentiment = new TweetSentiment();
+            while(iterator.hasNext()){
+                addTweetSentimentCount(tweetSentiment,iterator.next());
+            }
+
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(tweetSentiment);
+        } catch(Exception e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body( e.getMessage());
+        }
+
+    }
+
     private void addSentimentCount(SongSentiment songSentiment, Song song){
         if(song.getSentiment() ==1)
             songSentiment.setPositive( songSentiment.getPositive()+1);
@@ -77,6 +99,15 @@ public class DataController {
             songSentiment.setNegative( songSentiment.getNegative()+1);
         else
             songSentiment.setNeutral( songSentiment.getNeutral()+1);
+    }
+
+    private void addTweetSentimentCount(TweetSentiment tweetSentiment, Tweet tweet){
+        if(tweet.getSentiment() ==1)
+            tweetSentiment.setPositive( tweetSentiment.getPositive()+1);
+        else if(tweet.getSentiment() == -1)
+            tweetSentiment.setNegative( tweetSentiment.getNegative()+1);
+        else
+            tweetSentiment.setNeutral( tweetSentiment.getNeutral()+1);
     }
 
 }

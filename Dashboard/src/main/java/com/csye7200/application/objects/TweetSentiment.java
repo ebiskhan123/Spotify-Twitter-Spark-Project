@@ -8,6 +8,9 @@ import lombok.*;
 @AllArgsConstructor
 @ToString
 public class TweetSentiment {
+    public TweetSentiment(){
+
+    }
     private int positive;
     private int negative;
     private int neutral;
