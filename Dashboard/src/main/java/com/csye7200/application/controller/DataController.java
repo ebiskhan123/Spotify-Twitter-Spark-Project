@@ -45,7 +45,7 @@ public class DataController {
                 System.out.println(songList);
                 songList.add(iterator.next());
             }
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(songList);
+            return ResponseEntity.status(HttpStatus.OK).body(songList);
         } catch(Exception e){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body( e.getMessage());
         }
@@ -65,7 +65,7 @@ public class DataController {
                 addSentimentCount(songSentiment,iterator.next());
             }
 
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(songSentiment);
+            return ResponseEntity.status(HttpStatus.OK).body(songSentiment);
         } catch(Exception e){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body( e.getMessage());
         }
@@ -85,14 +85,14 @@ public class DataController {
                 addTweetSentimentCount(tweetSentiment,iterator.next());
             }
 
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(tweetSentiment);
+            return ResponseEntity.status(HttpStatus.OK).body(tweetSentiment);
         } catch(Exception e){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body( e.getMessage());
         }
 
     }
 
-    private void addSentimentCount(SongSentiment songSentiment, Song song){
+    public void addSentimentCount(SongSentiment songSentiment, Song song){
         if(song.getSentiment() ==1)
             songSentiment.setPositive( songSentiment.getPositive()+1);
         else if(song.getSentiment() == -1)
@@ -101,7 +101,7 @@ public class DataController {
             songSentiment.setNeutral( songSentiment.getNeutral()+1);
     }
 
-    private void addTweetSentimentCount(TweetSentiment tweetSentiment, Tweet tweet){
+    public void addTweetSentimentCount(TweetSentiment tweetSentiment, Tweet tweet){
         if(tweet.getSentiment() ==1)
             tweetSentiment.setPositive( tweetSentiment.getPositive()+1);
         else if(tweet.getSentiment() == -1)

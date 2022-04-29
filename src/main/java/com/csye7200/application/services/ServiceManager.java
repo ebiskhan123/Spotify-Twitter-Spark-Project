@@ -24,7 +24,7 @@ public class ServiceManager {
     public void scheduleBatchProcessing(){
         ScheduledExecutorService service = Executors.newScheduledThreadPool(3);
         service.scheduleAtFixedRate(() -> spotifyService.getData(),0,1, TimeUnit.DAYS);
-        service.scheduleAtFixedRate(() -> twitterService.getData(),0,5, TimeUnit.MINUTES);
+        service.scheduleAtFixedRate(() -> twitterService.getData(),0,1, TimeUnit.MINUTES);
 //        service.scheduleAtFixedRate(() -> {musixMatchService.setTitleAndArtist("Given up", "Linken Park");musixMatchService.getData();},0,1, TimeUnit.MINUTES);
     }
 
