@@ -13,4 +13,4 @@
 | *Presentation* |  -| Contains the presentation documents |
 | *Dashboard* | Java,Spring Boot, JavaScript | Acts as a Rest API for the data Stored in the MySql DB and the Dashboard which shows the relationship between the tweets and songs along with the sentiment of the lyrics and songs|
 
-
+![alt text](https://github.com/tanaysaxena97/CSYE7200FinalProject/blob/finalfinish/bar%20chart.png?raw=true)
