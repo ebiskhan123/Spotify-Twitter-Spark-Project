@@ -44,12 +44,19 @@ object SparkStreamingSongs {
         val trackName = row.getStruct(0).get(0).toString
         val trackLyrics = SentimentAnalysis.cleanString(row.getStruct(0).get(1).toString)
         val sentiment = SentimentAnalysis.intSentiment(trackLyrics)
-        val TFVector = row.get(4) match {case vec: org.apache.spark.ml.linalg.SparseVector => vec.toString()}
-        val IDFVector = row.get(5) match {case vec: org.apache.spark.ml.linalg.SparseVector => vec.toString()}
+        val TFVector = getTFVector(row) //row.get(4) match {case vec: org.apache.spark.ml.linalg.SparseVector => vec.toString()}
+        val IDFVector =  getIDFVector(row) //row.get(5) match {case vec: org.apache.spark.ml.linalg.SparseVector => vec.toString()}
         val query = s"INSERT INTO song(title, lyrics, sentiment, tf_vector, idf_vector) values('$trackName', '$trackLyrics', '$sentiment', '$TFVector', '$IDFVector')"
         DbOps.execute(query)
         println(query)
       })
+    }
+    def getTFVector( row: Row):String =  {
+      row.get(4) match {case vec: org.apache.spark.ml.linalg.SparseVector => vec.toString()}
+    }
+
+    def getIDFVector( row: Row):String =  {
+      row.get(5) match {case vec: org.apache.spark.ml.linalg.SparseVector => vec.toString()}
     }
 
     songExpanded.writeStream
