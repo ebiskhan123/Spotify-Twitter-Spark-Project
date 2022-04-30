@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="app.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.6.0/dist/chart.min.js"></script>
+</head>
+<body>
+<div>
+    <p>Processed Songs</p>
+    <button type="button" onclick="fetchBarData()">Processed Songs</button>
+    <div class="container-barchart">
+        <canvas id="bar-chart" width="500" height="150"></canvas>
+    </div>
+</div>
+<div>
+    <p>Songs sentiment</p>
+    <button type="button" onclick="fetchPieData()">Songs sentiment</button>
+    <div class="container-piechart">
+        <canvas id="pie-chart-songs" width="200" height="100"></canvas>
+    </div>
+</div>
+<div>
+    <p>Tweets sentiment</p>
+    <button type="button" onclick="fetchPieDataTweets()">Tweets sentiment</button>
+    <div class="container-piechart">
+        <canvas id="pie-chart-tweets" width="200" height="100"></canvas>
+    </div>
+</div>
+<script src="app.js"></script>
+</body>
+</html>

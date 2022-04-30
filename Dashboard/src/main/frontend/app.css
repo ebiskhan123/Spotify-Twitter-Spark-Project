@@ -1,0 +1,9 @@
+.container-barchart {
+    display: block;
+    width: 100%;
+}
+
+.container-piechart {
+    display: block;
+    width: 400px;
+}
