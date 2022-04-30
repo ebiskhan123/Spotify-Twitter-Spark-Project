@@ -13,6 +13,12 @@
 | *Presentation* |  -| Contains the presentation documents |
 | *Dashboard* | Java,Spring Boot, JavaScript | Acts as a Rest API for the data Stored in the MySql DB and the Dashboard which shows the relationship between the tweets and songs along with the sentiment of the lyrics and songs|
 
-Bar Chart of Final output.
+
+**Final output**
+Bar Chart showing the number of tweets related to the top 50 songs.
 
 ![alt text](https://github.com/tanaysaxena97/CSYE7200FinalProject/blob/finalfinish/bar%20chart.png?raw=true)
+
+Pie Chart showing the sentiment of tweets and songs.
+
+![alt text](https://github.com/tanaysaxena97/CSYE7200FinalProject/blob/main/Presentation/Sentiment.jpeg?raw=true)
