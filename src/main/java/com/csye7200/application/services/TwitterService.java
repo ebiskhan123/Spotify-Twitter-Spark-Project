@@ -50,7 +50,7 @@ public class TwitterService implements ServiceInterface {
         }
     }
 
-    private List<TwitterData> getListOfTwitterData(String body) throws JSONException {
+    public List<TwitterData> getListOfTwitterData(String body) throws JSONException {
 
     List<TwitterData> twDataList = new ArrayList<>();
         JSONObject jsonObject = new JSONObject(body);
@@ -62,7 +62,7 @@ public class TwitterService implements ServiceInterface {
         return twDataList;
     }
 
-    private TwitterData getTwitterObject(JSONObject object) throws JSONException {
+    public TwitterData getTwitterObject(JSONObject object) throws JSONException {
         return TwitterData.builder().id(object.getString("id")).text(object.getString("text")).build();
     }
 }

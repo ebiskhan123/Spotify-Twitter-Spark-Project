@@ -29,7 +29,7 @@ public class MusixMatchService  {
         this.title = title;
     }
 
-    private String getLyrics() throws MusixMatchException {
+    public String getLyrics() throws MusixMatchException {
         MusixMatch musixMatch = new MusixMatch(musixmatchToken);
         Track track = musixMatch.getMatchingTrack(title, artist);
         TrackData data = track.getTrack();
@@ -39,16 +39,21 @@ public class MusixMatchService  {
 
     public void getData(List<Song> songList) {
         try {
-            for( Song song : songList){
-                setTitleAndArtist(song.getTrackName(),song.getArtistName());
-                String lyrics = getLyrics();
-                song.setLyrics(lyrics);
-                System.out.println(lyrics);
-            }
+             processList(songList);
+
            kafkaService.publishMessage(new Message(songList,"DataCollectorService",null),"songs-topic");
         }
         catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    public void processList(List<Song> songList) throws MusixMatchException {
+        for( Song song : songList){
+            setTitleAndArtist(song.getTrackName(),song.getArtistName());
+            String lyrics = getLyrics();
+            song.setLyrics(lyrics);
+            System.out.println(lyrics);
         }
     }
 }

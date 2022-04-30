@@ -13,6 +13,7 @@ object SparkStreamingTweets {
       .appName("SparkStreaming")
       .getOrCreate()
 
+
     spark.sparkContext.setLogLevel("ERROR")
 
     val df = spark.readStream
