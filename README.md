@@ -15,7 +15,7 @@
 | *Dashboard* | Java,Spring Boot, JavaScript | Acts as a Rest API for the data Stored in the MySql DB and the Dashboard which shows the relationship between the tweets and songs along with the sentiment of the lyrics and songs|
 
 ## Project outline 
-![alt text](https://github.com/tanaysaxena97/CSYE7200FinalProject/blob/main/Presentation/Blank%20diagram.png =250x250)
+![alt text](https://github.com/tanaysaxena97/CSYE7200FinalProject/blob/main/Presentation/Blank%20diagram.png?raw=true)
 
 ## Steps to set up the pipeline 
 First Download and install Xaamp 
