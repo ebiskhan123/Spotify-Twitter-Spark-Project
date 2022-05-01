@@ -3,8 +3,8 @@
 |Member|  NUID| 
 |-------|--|
 |      Ebenezer Ajay Williams | 002166250  |
-|      Vasudha Banargad | 00-  |
-|      Tanay Saxena | 00  |
+|      Vasudha Bangard | 002119349  |
+|      Tanay Saxena | 001586302  |
 
 **Repo Outline**
 | Folder | Stack | Description |
